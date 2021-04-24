@@ -1,37 +1,28 @@
 import java.io.File;
 import java.io.FileWriter;   
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 public class DrawGraph {
-    
-
-    public static void drawgraph(Graph<String> g, List<String> path) {
+    public static void drawgraph(Graph g, List<String> path, String folderName, String fileNameExtension, int i) throws InterruptedException {
         toDotFile(g, path);
-        String img = "./img/path";
-        int i = 0;
-        Process p;
-        String imgName = img;
-        String checkName = imgName + ".jpg";
-        File imgGraph = new File (checkName);
 
-        while (imgGraph.exists() && ! imgGraph.isDirectory()) {
-            i++;
-            imgName = img + i;
-            checkName = imgName + ".jpg";
-            imgGraph = new File (checkName);
-        }
-        if (path == null) checkName = "graph.jpg";
-        try {
-            p = Runtime.getRuntime().exec("dot -T jpg .graph.dot -o " + checkName);
-            p.waitFor();
-            p = Runtime.getRuntime().exec("rm .graph.dot");
-            p.waitFor();
-            p.destroy();
-        } catch (Exception e) {}
+        String baseName = "./" + folderName + "/" + g.getGraphName();
+        String imgName = "";
+
+        if (path == null) imgName = baseName + "." + fileNameExtension;
+        else imgName = baseName + "_path" + i + "." + fileNameExtension;
+
+        ExecShell.Execute("dot -?", 2, "\nHaven't you install graphviz?" +
+                                       "\nTry \"sudo apt install graphviz\"" +
+                                       "\nOr go to: https://graphviz.org/download").waitFor();
+
+        new File("./" + folderName).mkdir();
+
+        ExecShell.Execute("dot -T" + fileNameExtension + " .graph.dot -o " + imgName).waitFor();
     }
 
-    private static void toDotFile(Graph<String> g, List<String> path) {
+    private static void toDotFile(Graph g, List<String> path) {
         try {
             FileWriter Writer = new FileWriter(".graph.dot");
             Writer.write("strict digraph mygraph { \n");
@@ -44,7 +35,6 @@ public class DrawGraph {
             }
             Writer.write(" [color=red]\n}");
             Writer.close();
-            System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

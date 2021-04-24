@@ -1,16 +1,21 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+class Graph {
   
-class Graph<T> {
-  
-    private Map<T, List<T> > map = new HashMap<>();
-  
-    public void addVertex(T s)
+    private String graphName = "";
+    private Map<String, List<String> > map = new HashMap<>();
+    
+    public void addVertex(String s)
     {
-        map.put(s, new LinkedList<T>());
+        map.put(s, new LinkedList<String>());
     }
   
-    public void addEdge(T source,
-                        T destination,
+    public void addEdge(String source,
+                        String destination,
                         boolean bidirectional)
     {
   
@@ -36,7 +41,7 @@ class Graph<T> {
     public int getEdgesCount(boolean bidirection)
     {
         int count = 0;
-        for (T v : map.keySet()) {
+        for (String v : map.keySet()) {
             count += map.get(v).size();
         }
         if (bidirection == true) {
@@ -45,7 +50,7 @@ class Graph<T> {
         return count;
     }
 
-    public void hasVertex(T s)
+    public void hasVertex(String s)
     {
         if (map.containsKey(s)) {
             System.out.println("The graph contains "
@@ -57,7 +62,7 @@ class Graph<T> {
         }
     }
   
-    public void hasEdge(T s, T d)
+    public void hasEdge(String s, String d)
     {
         if (map.get(s).contains(d)) {
             System.out.println("The graph has an edge between "
@@ -69,29 +74,29 @@ class Graph<T> {
         }
     }
 
-    public List<T> getAdjacency(T n) {
+    public List<String> getAdjacency(String n) {
         return map.get(n);
     }
 
-    public Set<T> getVertexList() {
+    public Set<String> getVertexList() {
         return map.keySet();
     }
 
     public String getFisrtVertex() {
-        String first = map.entrySet().iterator().next().getKey().toString();
-        for (T v : map.keySet()) {
-            if (first.compareTo(v.toString()) > 0) {
-                first = v.toString();
+        String first = map.entrySet().iterator().next().getKey();
+        for (String v : map.keySet()) {
+            if (first.compareTo(v) > 0) {
+                first = v;
             }
         }
         return first;
     }
 
     public String getLastVertex() {
-        String last = map.entrySet().iterator().next().getKey().toString();
-        for (T v : map.keySet()) {
-            if (last.compareTo(v.toString()) < 0) {
-                last = v.toString();
+        String last = map.entrySet().iterator().next().getKey();
+        for (String v : map.keySet()) {
+            if (last.compareTo(v) < 0) {
+                last = v;
             }
         }
         return last;
@@ -101,14 +106,26 @@ class Graph<T> {
     {
         StringBuilder builder = new StringBuilder();
         builder.append("");
-        for (T v : map.keySet()) {
-            builder.append("\t" + v.toString() + " -> {");
-            for (T w : map.get(v)) {
-                builder.append(w.toString() + " ");
+        for (String v : map.keySet()) {
+            builder.append("\t" + v + " -> {");
+            for (String w : map.get(v)) {
+                builder.append(w + " ");
             }
             builder.append("}\n");
         }
-        return (builder.toString());
+        return builder.toString();
+    }
+
+    public String getGraphName() {
+        return this.graphName;
+    }
+
+    public void setGraphName(String filename) {
+        String[] paths = filename.split("\\.");
+        this.graphName = paths[0];
+        for (int i = 1; i < paths.length - 1; i++) {
+            this.graphName = this.graphName + paths[i];
+        }
     }
 }
   
